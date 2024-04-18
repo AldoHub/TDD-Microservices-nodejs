@@ -1,0 +1,30 @@
+import { ICatalogRepository } from "../interface/catalogRepository.interface";
+import { Product } from "../models/product.model";
+
+export class MockCatalogRepository implements ICatalogRepository {
+    create(data: Product): Promise<Product> {
+        
+        const mockProduct = {
+            id: 111,
+            ...data
+        } as Product;
+
+        return Promise.resolve(mockProduct);
+
+
+    }
+    update(data: Product): Promise<Product> {
+        return Promise.resolve(data as Product);
+    }
+    delete(id: number):Promise<Product> {
+       return Promise.resolve({id} as Product);
+    }
+    findAll(): Promise<Product[]> {
+       return Promise.resolve([]);
+    }
+    findOne(id: number): Promise<Product> {
+        return Promise.resolve({ id } as Product);
+    }
+   
+    
+}
