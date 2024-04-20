@@ -1,25 +1,35 @@
 import express, {Request, Response, NextFunction } from "express";
 
-const router = express.Router();
+//repository
+import * as repository from "../repository/cart.repository";
 
+//service
+import * as cartService from "../service/cart.service";
+
+const router = express.Router();
+const repo = repository.CartRepository; 
 
 router.post("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    return res.status(200).json({message: "create cart"})
+    const response = await cartService.CreateCart(req.body, repo);
+    return res.status(200).json(response);
 });
 
 
 router.get("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    return res.status(200).json({message: "get cart"})
+    const response = await cartService.GetCart(req.body, repo);
+    return res.status(200).json(response);
 });
 
 
 router.patch("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    return res.status(200).json({message: "update cart"})
+    const response = await cartService.EditCart(req.body, repo);
+    return res.status(200).json(response)
 });
 
 
 router.delete("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    return res.status(200).json({message: "delete cart"})
+    const response = await cartService.DeleteCart(req.body, repo);
+    return res.status(200).json(response);
 });
 
 
