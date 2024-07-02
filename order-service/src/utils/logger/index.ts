@@ -1,10 +1,10 @@
-import { pinoHttp } from "pino-http";
+import PinoHttp from "pino-http";
 import pino from "pino";
 
 export const logger = pino({
   level: "info",
   base: {
-    serviceName: "catalog-service",
+    serviceName: "order-service",
   },
   serializers: pino.stdSerializers,
   timestamp: () => `,"time":"${new Date(Date.now()).toISOString()}"`,
@@ -14,7 +14,7 @@ export const logger = pino({
   },
 });
 
-export const httpLogger = pinoHttp({
+export const httpLogger = PinoHttp({
   level: "error",
   logger,
 });
