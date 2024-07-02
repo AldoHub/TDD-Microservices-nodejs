@@ -103,8 +103,7 @@ router.get("/products/:id", async(req: Request, res: Response, next:NextFunction
         const data = await catalogService.getProduct(id);
         return res.status(200).json(data);
     }catch(error: unknown){
-        const err:Error = error as Error;
-        return res.status(500).json(err.message);    
+      return next(error);  
     }
 
 

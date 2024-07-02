@@ -3,6 +3,7 @@ import cors from "cors";
 
 import orderRoutes from "./routes/order.routes";
 import cartRoutes from "./routes/cart.routes";
+import { HandleErrorWithLogger } from "./utils";
 
 const app = express();
 
@@ -15,5 +16,7 @@ app.use("/", (req: Request, res: Response, _: NextFunction) => {
     return res.status(200).json({message: "app working"})
 });
 
+
+app.use(HandleErrorWithLogger);
 
 export default app;
