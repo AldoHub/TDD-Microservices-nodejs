@@ -21,7 +21,6 @@ router.post("/cart", async(req:Request, res:Response, next:NextFunction) => {
             CartRequestSchema
         );        
 
-
         if(error){
             return res.status(500).json({error});
         }
@@ -36,19 +35,33 @@ router.post("/cart", async(req:Request, res:Response, next:NextFunction) => {
 
 
 router.get("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    const response = await cartService.GetCart(req.body, repo);
+
+    //might come from the auth middleware - JWT - Not implemented
+    const response = await cartService.GetCart(req.body.customerId, repo);
     return res.status(200).json(response);
 });
 
 
-router.patch("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    const response = await cartService.EditCart(req.body, repo);
+router.patch("/cart/:itemId", async(req:Request, res:Response, next:NextFunction) => {
+
+    //update the cartLineItem
+    const lineItemId = req.params.itemId;
+    const response = await cartService.EditCart({
+        id: parseInt(lineItemId),
+        qty: req.body.qty
+    }, 
+    repo    
+    );
+
     return res.status(200).json(response)
 });
 
 
-router.delete("/cart", async(req:Request, res:Response, next:NextFunction) => {
-    const response = await cartService.DeleteCart(req.body, repo);
+router.delete("/cart/:itemId", async(req:Request, res:Response, next:NextFunction) => {
+
+    const lineItemId = req.params.itemId;
+
+    const response = await cartService.DeleteCart(parseInt(lineItemId), repo);
     return res.status(200).json(response);
 });
 
