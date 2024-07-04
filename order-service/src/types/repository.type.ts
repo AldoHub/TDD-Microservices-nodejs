@@ -1,3 +1,4 @@
+/*
 type Create = (input:unknown) => Promise<{}>
 type Find = (input:unknown) => Promise<{}>
 type Update = (input:unknown) => Promise<{}>
@@ -9,3 +10,4 @@ export type CartRepositoryType = {
     update: Update,
     delete: Delete
 };
+*/
