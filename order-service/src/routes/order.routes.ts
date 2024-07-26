@@ -6,11 +6,10 @@ const router = express.Router();
 
 
 router.post("/order", async(req:Request, res:Response, next:NextFunction) => {
-    
     //send broker message - dummy
     await MessageBroker.publish({
         topic: "OrderEvents",
-        headers: {token: req.headers.authorization},
+        headers: {token: req.headers.authorization}, //if no Authorization token, just add whatever string to the header for it
         event: OrderEvent.CREATE_ORDER,
         message: {
             orderId: 1,
