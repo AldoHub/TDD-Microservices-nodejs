@@ -3,7 +3,7 @@ import { Type, Static } from "@sinclair/typebox";
 //cart input schema
 export const CartRequestSchema = Type.Object({
     productId: Type.Integer(),
-    customerId: Type.Integer(),
+    //customerId: Type.Integer(),
     qty: Type.Integer()
 });
 

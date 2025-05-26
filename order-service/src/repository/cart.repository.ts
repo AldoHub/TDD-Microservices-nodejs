@@ -3,14 +3,13 @@ import { DB } from "../db/db.connection";
 import {Cart, CartLineItem, cartLineItems, carts } from "../db/schema";
 import { NotFoundError } from "../utils";
 
-
-
 export type CartRepositoryType = {
     createCart: (customerId: number, lineItem: CartLineItem) => Promise<number>;
     findCart: (id: number) => Promise<Cart>;
     updateCart: (id: number, qty: number) => Promise<CartLineItem>;
     deleteCart: (id: number) => Promise<Boolean>;
     clearCartData: (id: number) => Promise<Boolean>; 
+    findCartByProductId: (customerId: number, productId: number) => Promise<CartLineItem>; 
 };
 
 const createCart = async(customerId: number, {itemName, price, productId, qty, variant}: CartLineItem): Promise<number> => {
@@ -83,10 +82,24 @@ const clearCartData = async (id: number): Promise<boolean> => {
 }
 
 
+const findCartByProductId = async (customerId: number, productId: number): Promise<CartLineItem> => {
+    const cart = await DB.query.carts.findFirst({
+        where: (carts, { eq }) => eq(carts.customerId, customerId),
+        with: {
+            lineItems: true
+        }
+    });
+
+    const lineItem = cart?.lineItems.find((item) => item.productId === productId);
+
+    return lineItem as CartLineItem;
+}
+
 export const CartRepository: CartRepositoryType = {
     createCart,
     updateCart,
     findCart,
     deleteCart,
-    clearCartData
+    clearCartData,
+    findCartByProductId
 }

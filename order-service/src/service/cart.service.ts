@@ -4,14 +4,20 @@ import { GetProductDetails } from "../utils/broker";
 import { NotFoundError, logger } from "../utils";
 import { CartLineItem } from "../db/schema";
 
-export const CreateCart = async(input: CartRequestInput, repo: CartRepositoryType) => {
+export const CreateCart = async(input: CartRequestInput & {customerId: number}, repo: CartRepositoryType) => {
     
-    //get details from the Catalog microservice
+    //get product details from the catalog service
     const product = await GetProductDetails(input.productId);
     logger.info(product);
 
     if(product.stock < input.qty){
         throw new NotFoundError("product is out of stock");
+    }
+
+    //see if the product is already in the cart
+    const lineItem = await repo.findCartByProductId(input.customerId, input.productId);
+    if(lineItem){
+        return repo.updateCart(lineItem.id, lineItem.qty + input.qty)
     }
 
     return repo.createCart(input.customerId, {
