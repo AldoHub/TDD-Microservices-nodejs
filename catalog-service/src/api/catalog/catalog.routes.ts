@@ -124,7 +124,6 @@ router.delete("/products/:id", async(req: Request, res: Response, next:NextFunct
 });
 
 
-
 router.post("/products/stock", async (req: Request, res: Response)=> {
     try{
         const data = await catalogService.getProductStock(req.body.ids);
@@ -135,6 +134,7 @@ router.post("/products/stock", async (req: Request, res: Response)=> {
 
     }
 }); 
+
 
 export default router;
 

@@ -40,3 +40,7 @@ export const lineItemsRelations = relations(cartLineItems, ({ one }) => ({
         references: [carts.id]
     })
 }));
+
+
+// --- DO the migrations using "npm run db:generate"
+// --- first run the docker file from the db folder --- "docker-compose up"
