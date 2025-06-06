@@ -6,8 +6,8 @@ export const orders = pgTable("orders", {
     orderNumber: varchar("order_number").notNull().unique(),
     customerId: integer("customer_id").notNull(),
     amount: numeric("amount").notNull(), 
-    status: varchar("status").notNull(), 
-    txnId: varchar("txn_id").notNull(),
+    status: varchar("status").default("pending"), 
+    txnId: varchar("txn_id"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -18,7 +18,7 @@ export type Order = InferSelectModel<typeof orders>;
 export const orderLineItems = pgTable("order_line_items", {
     id: serial("id").primaryKey(), // for db record
     itemName: varchar("item_name").notNull(),
-    aty: integer("qty").notNull(),
+    qty: integer("qty").notNull(),
     price: numeric("price").notNull(), 
     orderId: integer("order_id").references(() => orders.id, {onDelete: "cascade"}).notNull(), 
     createdAt: timestamp("created_at").notNull().defaultNow(),

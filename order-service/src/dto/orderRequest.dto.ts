@@ -14,7 +14,7 @@ export type OrderLineItemType = {
 export interface OrderWithLineItems {
     id?: number;
     customerId: number;
-    orderId: number;
+    orderNumber: number;
     txnId: string | null; //transaction id
     amount: string;
     status: string;

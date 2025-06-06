@@ -1,3 +1,6 @@
+import { eq } from "drizzle-orm";
+import { DB } from "../db/db.connection";
+import { orderLineItems, orders } from "../db/schema";
 import { OrderWithLineItems } from "../dto/orderRequest.dto"
 
 export type OrderRepositoryType =  {
@@ -8,20 +11,88 @@ export type OrderRepositoryType =  {
     findOrdersByCostumerId: (customerId: number) => Promise<OrderWithLineItems[]>;
 };
 
-export const OrderRepository: OrderRepositoryType = {
-    createOrder: function (lineItem: OrderWithLineItems): Promise<number> {
-        throw new Error("Function not implemented.");
-    },
-    findOrder: function (id: number): Promise<OrderWithLineItems | null> {
-        throw new Error("Function not implemented.");
-    },
-    updateOrder: function (id: number, status: string): Promise<OrderWithLineItems> {
-        throw new Error("Function not implemented.");
-    },
-    deleteOrder: function (id: number): Promise<boolean> {
-        throw new Error("Function not implemented.");
-    },
-    findOrdersByCostumerId: function (customerId: number): Promise<OrderWithLineItems[]> {
-        throw new Error("Function not implemented.");
+    const createOrder =  async(lineItem: OrderWithLineItems): Promise<number> =>  {
+        const result = await DB.insert(orders)
+        .values({
+            customerId: lineItem.customerId,
+            orderNumber: lineItem.orderNumber.toString(),
+            status: lineItem.status,
+            txnId: lineItem.txnId,
+            amount: lineItem.amount
+        })
+        .returning();
+
+        const [{id}] = result;
+        if(id > 0 ) {
+            for(const item of lineItem.orderItems){
+                await DB.insert(orderLineItems)
+                .values({
+                    orderId: id,
+                    itemName: item.itemName,
+                    qty: item.qty,
+                    price: item.price.toString(),
+                })
+                .execute();
+            }
+        }
+       
+        return id;
     }
+
+    const findOrder =  async(id: number): Promise<OrderWithLineItems | null> => {
+       const order = await DB.query.orders.findFirst({
+        where: (orders, {eq}) => eq(orders.id, id),
+        with: {
+            lineItems: true
+        }
+       });
+
+       if(!order){
+        throw new Error("Order not found");
+       }
+
+       return order as unknown as OrderWithLineItems;
+    }
+
+    const updateOrder = async(id: number, status: string): Promise<OrderWithLineItems> => {
+       await DB.update(orders)
+       .set({
+        status: status
+       })
+       .where(eq(orders.id, id))
+       .returning();
+
+       const order = await findOrder(id);
+       if(!order){
+          throw new Error("Order not found");
+       }
+
+       return order;
+    }
+
+    const deleteOrder = async(id: number): Promise<boolean> => {
+      await DB.delete(orders).where(eq(orders.id, id)).returning();
+      return true;
+    }
+
+    const findOrdersByCostumerId = async(customerId: number): Promise<OrderWithLineItems[]> => {
+       const orders = await DB.query.orders.findMany({
+        where: (orders, {eq}) => eq(orders.customerId, customerId),
+        with: {
+            lineItems: true
+        }
+       });
+    
+        return orders as unknown as OrderWithLineItems[];
+    }
+
+
+
+
+export const OrderRepository: OrderRepositoryType = {
+    createOrder,
+    findOrder,
+    updateOrder,
+    deleteOrder,
+    findOrdersByCostumerId
 }
