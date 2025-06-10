@@ -3,10 +3,16 @@ import { CatalogService } from "../../services/catalog.service";
 import { CatalogRepository } from "../../repository/catalog.repository"; //real repository connected to db
 import { RequestValidator } from "../../utils/requestValidator";
 import { createProductRequest, updateProductRequest } from "../../dto/product.dto";
+import { BrokerService } from "../../services/broker.service";
+
 const router = express.Router();
 
 //inject the service
 export const catalogService = new CatalogService(new CatalogRepository());
+
+//broker
+const brokerService = new BrokerService(catalogService);
+brokerService.InitializeBroker();
 
 //endpoints
 router.post("/products", async(req: Request, res: Response, next:NextFunction) => {
