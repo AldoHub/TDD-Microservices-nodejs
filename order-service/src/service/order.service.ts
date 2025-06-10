@@ -32,7 +32,7 @@ export const CreateOrder = async(userId: number, repo: OrderRepositoryType, cart
     //create order with line items
     const orderInput: OrderWithLineItems = {
         orderNumber: orderNumber,
-        txnId: null,
+        txnId: null, // payment ID
         customerId: userId,
         amount: cartTotal.toString(),
         orderItems: orderLineItems,

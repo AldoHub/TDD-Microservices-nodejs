@@ -77,7 +77,7 @@ const deleteCart = async(id: number): Promise<boolean> => {
 
 
 const clearCartData = async (id: number): Promise<boolean> => {
-    await DB.delete(carts).where(eq(carts.id, id))
+    await DB.delete(carts).where(eq(carts.customerId, id))
     .returning();
     return true;
 }
